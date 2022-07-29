@@ -1,2 +1,2 @@
 # jpush
-push inspired language
+push inspired vm language thing
