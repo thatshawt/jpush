@@ -13,7 +13,8 @@ public class PushVM {
 
     //special stacks
     public PushStack<Exception> exceptionStack;//all exceptions are stored here
-    public PushStack<PushStack<?>> stackStack;//used to save other stacks contents
+    public PushStack<PushStack<?>> stackStack; //used to save other stacks contents
+    public PushStack<Instruction> instructionStack;//has all the instructions i guess idk yet
 
     //standard data stacks
     public PushStack<Boolean> booleanStack;

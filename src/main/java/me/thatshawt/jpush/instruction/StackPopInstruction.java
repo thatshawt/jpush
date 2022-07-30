@@ -2,7 +2,6 @@ package me.thatshawt.jpush.instruction;
 
 import me.thatshawt.jpush.PushVM;
 import me.thatshawt.jpush.data.PushStack;
-import me.thatshawt.jpush.instruction.Instruction;
 
 public abstract class StackPopInstruction<T> extends Instruction {
     /**

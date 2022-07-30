@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="jpush" target="7" />
+      <module name="jpush" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
