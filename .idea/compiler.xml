@@ -6,11 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="jpush" />
+        <module name="Jpush" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="jpush" target="8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
