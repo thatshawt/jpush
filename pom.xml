@@ -18,7 +18,6 @@
     </dependencies>
 
     <build>
-        <finalName>BruhAppBuildPoop</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

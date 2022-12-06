@@ -6,6 +6,6 @@ import xyz.davidpineiro.jpush.vm.instruction.Instruction;
 public class IntFlushInstruction implements Instruction {
     @Override
     public void exec(PushVM vm) {
-        vm.intStack.empty();
+        vm.intStack.clear();
     }
 }

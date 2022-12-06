@@ -6,6 +6,6 @@ import xyz.davidpineiro.jpush.vm.instruction.Instruction;
 public class FloatFlushInstruction implements Instruction {
     @Override
     public void exec(PushVM vm) {
-        vm.floatStack.empty();
+        vm.floatStack.clear();
     }
 }

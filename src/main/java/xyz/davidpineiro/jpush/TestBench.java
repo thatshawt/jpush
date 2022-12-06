@@ -1,7 +1,6 @@
 package xyz.davidpineiro.jpush;
 
 import xyz.davidpineiro.jpush.vm.DebugPushVM;
-import xyz.davidpineiro.jpush.vm.PushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
 import xyz.davidpineiro.jpush.vm.instruction.floating.FloatAddInstruction;
 import xyz.davidpineiro.jpush.vm.instruction.floating.FloatConstantInstruction;
@@ -11,11 +10,9 @@ import java.util.List;
 
 /*
 TODO in order:
--do programming language part
--complete the bool tests
--add float, int tests
+- make annotation processor as shortcut to generate new instructions
  */
-public class Test {
+public class TestBench {
 
     public static void main(String[] args) {
         DebugPushVM vm = new DebugPushVM();
@@ -31,9 +28,10 @@ public class Test {
         System.out.println("before:");
         vm.printAllStacks();
 
-        vm.runUntilHalt(true);//i like how i just have a method called runUntilHalt() like i can defeat the halting problem
+        //i like how i just have a method called runUntilHalt() like i can defeat the halting problem
+        vm.runUntilHalt();
 
-        System.out.println("after:");
+        System.out.println("\nafter:");
         vm.printAllStacks();
 //        System.out.println(vm.intStack.toString());
     }

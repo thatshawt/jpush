@@ -28,10 +28,10 @@ public class PushVM {
     }
 
     public void clearAllStacks(){
-        this.execStack.empty();
-        this.intStack.empty();
-        this.floatStack.empty();
-        this.boolStack.empty();
+        this.execStack.clear();
+        this.intStack.clear();
+        this.floatStack.clear();
+        this.boolStack.clear();
     }
 
     public void addInstructions(List<Instruction> instructions){
@@ -47,7 +47,7 @@ public class PushVM {
 
     //halting problem lol, i dont care
     public void runUntilHalt(){
-        runUntilHalt(false);
+        runUntilHalt(true);
     }
 
     public void runUntilHalt(boolean backwards){
