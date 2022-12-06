@@ -1,6 +1,7 @@
 package xyz.davidpineiro.jpush.vm.instruction.bool;
 
 public class BoolAndInstruction extends BinaryBoolOperation {
+
     @Override
     boolean getResult(boolean a, boolean b) {
         return a && b;
