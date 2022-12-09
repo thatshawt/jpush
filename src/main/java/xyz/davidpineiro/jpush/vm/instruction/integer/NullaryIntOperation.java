@@ -1,15 +1,14 @@
 package xyz.davidpineiro.jpush.vm.instruction.integer;
 
+import xyz.davidpineiro.jpush.vm.PushStack;
 import xyz.davidpineiro.jpush.vm.PushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
+import xyz.davidpineiro.jpush.vm.instruction.NullaryInstructionOperation;
 
-public abstract class NullaryIntOperation implements Instruction {
-
-    abstract int getResult();
+public abstract class NullaryIntOperation extends NullaryInstructionOperation<Integer> {
 
     @Override
-    public void exec(PushVM vm){
-        //we do this regardless cus we dont have any inputs to keep or discard
-        vm.intStack.push(getResult());
+    protected PushStack<Integer> getStack(PushVM vm) {
+        return vm.intStack;
     }
 }

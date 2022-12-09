@@ -4,10 +4,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.ValueSource;
 import xyz.davidpineiro.jpush.vm.DebugPushVM;
-import xyz.davidpineiro.jpush.vm.PushVM;
 import xyz.davidpineiro.jpush.vm.instruction.bool.*;
+import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolConstantInstruction;
+import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolDupInstruction;
+import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolEqualInstruction;
+import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolFlushInstruction;
 
 import java.util.Arrays;
 

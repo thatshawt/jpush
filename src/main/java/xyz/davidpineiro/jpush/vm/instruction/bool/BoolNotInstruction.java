@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.bool;
 
 public class BoolNotInstruction extends UnaryBoolOperation {
     @Override
-    boolean getResult(boolean a) {
+    protected Boolean getResult(Boolean a) {
         return !a;
     }
 

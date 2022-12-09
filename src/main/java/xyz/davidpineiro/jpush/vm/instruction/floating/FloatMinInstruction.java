@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.floating;
 
 public class FloatMinInstruction extends BinaryFloatOperation {
     @Override
-    float getResult(float a, float b) {
+    public Float getResult(Float a, Float b) {
         return Math.min(a, b);
     }
     //    @Override

@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.floating;
 
 public class FloatSinInstruction extends UnaryFloatOperation {
     @Override
-    float getResult(float a) {
+    public Float getResult(Float a) {
         return (float)Math.sin(a);
     }
 

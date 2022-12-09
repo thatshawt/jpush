@@ -2,8 +2,6 @@ package xyz.davidpineiro.jpush.vm;
 
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
 
-import java.util.List;
-
 public class PushVM {
 
     protected boolean debug = false;
@@ -34,13 +32,19 @@ public class PushVM {
         this.boolStack.clear();
     }
 
-    public void addInstructions(List<Instruction> instructions){
+//    public void addInstructions(List<Instruction> instructions){
+//        for(Instruction op : instructions)
+//            execStack.push(op);
+//    }
+//
+    public void addInstructions(Instruction instruction, Instruction... instructions){
+        execStack.push(instruction);
         for(Instruction op : instructions)
             execStack.push(op);
     }
 
-    public void addInstructions(Instruction instruction, Instruction... instructions){
-        execStack.push(instruction);
+    public void addInstructions(Iterable<Instruction> instructions){
+//        execStack.push(instruction);
         for(Instruction op : instructions)
             execStack.push(op);
     }

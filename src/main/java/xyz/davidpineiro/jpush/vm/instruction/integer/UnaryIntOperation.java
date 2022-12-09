@@ -1,17 +1,14 @@
 package xyz.davidpineiro.jpush.vm.instruction.integer;
 
+import xyz.davidpineiro.jpush.vm.PushStack;
 import xyz.davidpineiro.jpush.vm.PushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
+import xyz.davidpineiro.jpush.vm.instruction.NullaryInstructionOperation;
+import xyz.davidpineiro.jpush.vm.instruction.UnaryInstructionOperation;
 
-public abstract class UnaryIntOperation implements Instruction {
-    //make this true to keep the inputs of the thing
-    protected boolean keepInputs = false;
-    abstract int getResult(int a);
-
-    public void exec(PushVM vm){
-        if(!keepInputs)//dont keep inputs (default behavior)
-            vm.intStack.push(getResult(vm.intStack.pop()));
-        else//keep inputs
-            vm.intStack.push(getResult(vm.intStack.get(vm.intStack.size()-1)));
+public abstract class UnaryIntOperation extends UnaryInstructionOperation<Integer> {
+    @Override
+    protected PushStack<Integer> getStack(PushVM vm) {
+        return vm.intStack;
     }
 }

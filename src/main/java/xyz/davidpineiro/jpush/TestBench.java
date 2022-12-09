@@ -3,7 +3,7 @@ package xyz.davidpineiro.jpush;
 import xyz.davidpineiro.jpush.vm.DebugPushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
 import xyz.davidpineiro.jpush.vm.instruction.floating.FloatAddInstruction;
-import xyz.davidpineiro.jpush.vm.instruction.floating.FloatConstantInstruction;
+import xyz.davidpineiro.jpush.vm.instruction.floating.stack.FloatConstantInstruction;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +22,7 @@ public class TestBench {
                 new FloatConstantInstruction(1.0f),
                 new FloatConstantInstruction(2.0f),
                 new FloatAddInstruction()
-                );
+            );
 
         vm.addInstructions(program1);
         System.out.println("before:");

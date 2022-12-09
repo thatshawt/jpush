@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.integer;
 
 public class IntMulInstruction extends BinaryIntOperation {
     @Override
-    int getResult(int a, int b) {
+    public Integer getResult(Integer a, Integer b) {
         return a * b;
     }
 

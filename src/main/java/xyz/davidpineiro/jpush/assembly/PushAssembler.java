@@ -26,6 +26,10 @@ public final class PushAssembler {
         }
         instructionClass = instructionClass1;
 
+        loadStandardInstructions();
+    }
+
+    public static void loadStandardInstructions(){
         Set<Class> boolOps = findAllClassesUsingClassLoader(
                 "xyz.davidpineiro.jpush.vm.instruction.bool"
         );
@@ -40,31 +44,43 @@ public final class PushAssembler {
         classes.addAll(floatOps);
         classes.addAll(intOps);
 
-//            Class clazz = Class.forName("xyz.davidpineiro.jpush.vm.instruction.bool.BoolConstantInstruction");
+//            Class clazz = Class.forName("xyz.davidpineiro.jpush.vm.instruction.bool.base.BoolConstantInstruction");
 
+        //add all the instructions to the map
+        addInstructions(classes);
+    }
+
+    public static void addInstructions(Iterable<Class> classes){
         for(Class clazz : classes){
 //                System.out.printf("%s | ", clazz.getModifiers());
             if(instructionClass.isAssignableFrom(clazz) &&
                     !Modifier.isAbstract(clazz.getModifiers())){
                 String fullName = clazz.getSimpleName();
+
+                //e.g "IntDupInstruction" -> "IntDup"
                 String truncated = fullName.substring(
                         0, fullName.length() - ("Instruction".length())
                 );
-                System.out.printf("YES %s\n", truncated);
+//                System.out.printf("YES %s\n", truncated);
                 instructionMap.put(truncated.toLowerCase(), clazz);
             }else{
-                System.out.printf("NO  %s\n", clazz.getSimpleName());
+//                System.out.printf("NO  %s\n", clazz.getSimpleName());
             }
         }
     }
 
     public static void main(String[] args){
         try {
-            Instruction[] program = assemble("IntConstant 1\n" +
-                    "IntConstant 2\n" +
-                    "IntAdd");
+            Instruction[] program = assemble(
+                "IntConstant 1\n" +
+                "IntConstant 2\n" +
+                "IntAdd\n\n\n" +
+                "BoolConstant true\n" +
+                "BoolNot\n"
+            );
 
-            System.out.printf("\n\nprogram length: %d\nprogram: %s\n", program.length, Arrays.toString(program));
+            System.out.printf("\n\nprogram length: %d\nprogram: %s\n",
+                    program.length, Arrays.toString(program));
 
             DebugPushVM vm = new DebugPushVM();
             vm.printAllStacks();
@@ -87,7 +103,7 @@ public final class PushAssembler {
     IntAdd
     "
 
-    truth gate program:
+    boolean logic program:
     "
     BoolConstant true
     BoolConstant false
@@ -107,8 +123,11 @@ public final class PushAssembler {
     public static Instruction[] assemble(String program) throws InstructionNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         List<Instruction> instructionList = new ArrayList<>();
 
-        for(String line : program.split("\n")){
+        //https://stackoverflow.com/questions/454908/split-java-string-by-new-line
+        for(String line : program.split("\\r?\\n")){
+            if(line.strip().isBlank())continue;
             String[] parts = line.split("\\s+");
+            System.out.println(Arrays.toString(parts));
             Class clazz = instructionMap.get(parts[0].toLowerCase());
             if(clazz != null){
                 List<Object> args = new ArrayList<>();
@@ -127,6 +146,7 @@ public final class PushAssembler {
                 instructionList.add((Instruction)
                         clazz.getConstructors()[0].newInstance(args.toArray()));
             }else{
+                System.err.println(Arrays.toString(parts));
                 throw new InstructionNotFoundException();
             }
         }

@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.floating;
 
 public class FloatDivInstruction extends BinaryFloatOperation {
     @Override
-    float getResult(float a, float b) {
+    public Float getResult(Float a, Float b) {
         return a / b;
     }
 
