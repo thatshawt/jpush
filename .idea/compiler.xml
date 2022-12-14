@@ -2,16 +2,21 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
+      <profile name="Maven default annotation processors profile">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="jpush" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="jpush" target="11" />
-      <module name="Jpush" target="11" />
+      <module name="jpush" target="1.5" />
+      <module name="TheAnnotationProcessor" target="11" />
+      <module name="VirtualMachine" target="11" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="jpush" options="" />
+    </option>
   </component>
 </project>

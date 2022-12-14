@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>xyz.davidpineiro</groupId>
+    <artifactId>VirtualMachine</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xyz.davidpineiro</groupId>
+            <artifactId>TheAnnotationProcessor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <topBuildDirectory>${project.build.directory}</topBuildDirectory>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+
+                    <execution>
+                        <id>mainCompile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>
+                                    xyz.davidpineiro.jpush.vm.instruction.annotationHelper.InstructionConfigStuff
+                                </exclude>
+                            </excludes>
+                            <generatedSourcesDirectory>
+                                ${project.build.directory}/generated-sources/
+                            </generatedSourcesDirectory>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>xyz.davidpineiro</groupId>
+                                    <artifactId>TheAnnotationProcessor</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
