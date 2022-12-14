@@ -1,9 +1,6 @@
 package xyz.davidpineiro.jpush.vm.instruction.annotationHelper;
 
 import com.google.auto.service.AutoService;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -50,7 +47,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
     }
 
     InstructionTemplate[] templates = null;
-    Configuration freeMarkerConfig;
+//    Configuration freeMarkerConfig;
     Messager messager;
 
     public static final String VAR_STACK_NAME = "stack_name";
@@ -66,7 +63,6 @@ public class InstructionConfigStuff extends AbstractProcessor {
 
     @Override
     public void init(ProcessingEnvironment env) {
-        freeMarkerConfig = new Configuration(Configuration.VERSION_2_3_29);
         try {
             URI uri = InstructionConfigStuff.class.getResource("/instructions").toURI();
             Path myPath;
@@ -74,7 +70,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
             if (uri.getScheme().equals("jar")) {
                 FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
                 System.out.println("the files:" + fileSystem);
-                myPath = fileSystem.getPath("");
+                myPath = fileSystem.getPath("/instructions");
             } else {
                 System.out.println("sussy baka");
                 myPath = Paths.get(uri);
@@ -84,15 +80,15 @@ public class InstructionConfigStuff extends AbstractProcessor {
             List<InstructionTemplate> templatesTemp = new ArrayList<>();
             for (Iterator<Path> it = walk.iterator(); it.hasNext(); ) {
                 Path path = it.next();
+                System.out.println("considering..." + path);
                 if(path.toString().endsWith("instruction") || !path.toString().endsWith(".ftl"))continue;
-                System.out.println(path);
-
+                System.out.println("going with " + path);
                 InputStream in = Files.newInputStream(path);
                 final String templateData = IOUtils.toString(in, Charset.defaultCharset());
                 final String templateName = path.getFileName().toString();
                 templatesTemp.add(new InstructionTemplate(templateName, templateData));
             }
-            templates = templatesTemp.toArray(new InstructionTemplate[0]);
+            templates = templatesTemp.toArray(new InstructionTemplate[]{});
 
             System.out.println("after init: " + Arrays.toString(templates));
         } catch (URISyntaxException | IOException e) {
