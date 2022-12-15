@@ -24,9 +24,9 @@ public class InstructionTemplate {
     /*
     replaces every instance of '${key}' to its corresponding 'value' in the valueMapping
      */
-    public void process(Map<String, String> valueMapping, Writer writer) throws IOException {
+    public void process(Map<InstructionConfigStuff.TemplateVariable, String> valueMapping, Writer writer) throws IOException {
         String templateCopy = templateString;
-        for(final String key : valueMapping.keySet()){
+        for(final InstructionConfigStuff.TemplateVariable key : valueMapping.keySet()){
             final String value = valueMapping.get(key);
 
             templateCopy = templateCopy.replace("${" + key + "}",value);

@@ -1,4 +1,4 @@
-package xyz.davidpineiro.jpush.vm.instruction.bool.stack;
+package xyz.davidpineiro.jpush.vm.instruction.bool;
 
 import xyz.davidpineiro.jpush.vm.instruction.bool.NullaryBoolOperation;
 

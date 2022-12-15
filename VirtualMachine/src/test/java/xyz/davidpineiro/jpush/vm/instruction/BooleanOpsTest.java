@@ -6,10 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import xyz.davidpineiro.jpush.vm.DebugPushVM;
 import xyz.davidpineiro.jpush.vm.instruction.bool.*;
-import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolConstantInstruction;
-import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolDupInstruction;
-import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolEqualInstruction;
-import xyz.davidpineiro.jpush.vm.instruction.bool.stack.BoolFlushInstruction;
+import xyz.davidpineiro.jpush.vm.instruction.bool.stack.*;
+//import xyz.davidpineiro.jpush.vm.instruction.bool.temp.stack.BoolConstantInstruction;
+//import xyz.davidpineiro.jpush.vm.instruction.bool.temp.stack.BoolDupInstruction;
+//import xyz.davidpineiro.jpush.vm.instruction.bool.temp.stack.BoolEqualInstruction;
+//import xyz.davidpineiro.jpush.vm.instruction.bool.temp.stack.BoolFlushInstruction;
 
 import java.util.Arrays;
 
@@ -291,6 +292,8 @@ public class BooleanOpsTest {
         );
 
     }
+
+
 
 //    @Test
 //    void duplicate(){

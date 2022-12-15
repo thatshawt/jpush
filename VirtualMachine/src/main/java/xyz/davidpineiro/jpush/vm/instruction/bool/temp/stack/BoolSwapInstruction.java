@@ -1,4 +1,4 @@
-package xyz.davidpineiro.jpush.vm.instruction.bool.stack;
+package xyz.davidpineiro.jpush.vm.instruction.bool.temp.stack;
 
 import xyz.davidpineiro.jpush.vm.PushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;

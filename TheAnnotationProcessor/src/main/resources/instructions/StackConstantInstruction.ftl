@@ -1,7 +1,8 @@
-package ${stack_instruction_path}.${stack_package_name}.stack;
+package ${stack_instruction_path}.stack;
 
-import xyz.davidpineiro.jpush.vm.PushVM;
-import xyz.davidpineiro.jpush.vm.instruction.Instruction;
+import xyz.davidpineiro.jpush.vm.*;
+import xyz.davidpineiro.jpush.vm.instruction.*;
+import ${stack_instruction_path}.*;
 
 public class ${stack_name}ConstantInstruction implements Instruction {
 
