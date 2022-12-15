@@ -35,7 +35,7 @@ public class PushStack<T> {
     }
 
     public void changeIndex(int index){
-        if(!stacks.containsKey(index))stacks.put(index, new Stack<T>());
+        if(!stacks.containsKey(index))stacks.put(index, new Stack<>());
         stackIndex = index;
     }
 
@@ -83,4 +83,11 @@ public class PushStack<T> {
         getCurrentStack().clear();
     }
 
+    @Override
+    public String toString() {
+        return "PushStack{" +
+                "getCurrentStack()=" + getCurrentStack() +
+                ", stackIndex=" + stackIndex +
+                '}';
+    }
 }

@@ -41,8 +41,6 @@ public class InstructionConfigStuff extends AbstractProcessor {
         }
     }
 
-    InstructionTemplate[] stackInstructionTemplates = null;
-    InstructionTemplate[] operatorTemplates = null;
 //    Configuration freeMarkerConfig;
     Messager messager;
 
@@ -63,10 +61,16 @@ public class InstructionConfigStuff extends AbstractProcessor {
         }
     }
 
+    InstructionTemplate[] stackInstructionTemplates = null;
+    InstructionTemplate[] operatorTemplates = null;
+    InstructionTemplate[] numericTemplates = null;
+
     public static final String STACK_INSTRUCTION_RESOURCE_PATH
             = "/instructions/stack";
     public static final String INSTRUCTIONS_OPERATORS_PATH
             = "/instructions/operators";
+    public static final String NUMERIC_TEMPLATES_PATH
+            = "/instructions/numeric";
 
     private FileSystem jarFileSystem = null;
 
@@ -117,7 +121,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
     public void init(ProcessingEnvironment env) {
         stackInstructionTemplates = scanForTemplates(STACK_INSTRUCTION_RESOURCE_PATH);
         operatorTemplates = scanForTemplates(INSTRUCTIONS_OPERATORS_PATH);
-//        instructionTemplateDir = uri.;
+        numericTemplates = scanForTemplates(NUMERIC_TEMPLATES_PATH);
 
         messager = env.getMessager();
         super.init(env);
@@ -151,10 +155,8 @@ public class InstructionConfigStuff extends AbstractProcessor {
                     String value = (String) var.getConstantValue();
 
                     Arrays.stream(TemplateVariable.values()).forEach(varThing -> {
-                        if(varThing.a.equals(varName)) {
-//                            valueMapping.put(varName, value);
+                        if(varThing.a.equals(varName))
                             valueMapping.put(varThing, value);
-                        }
                     });
                 }
                 if(!valueMapping.containsKey(TemplateVariable.STACK_INSTRUCTION_PATH)){
@@ -173,7 +175,13 @@ public class InstructionConfigStuff extends AbstractProcessor {
                     return false;
                 }
 
-                if(!createStackInstructions((TypeElement) element, valueMapping))return false;
+                GenerateStackIntructions annotationThingIdk =
+                        element.getAnnotation(GenerateStackIntructions.class);
+                boolean numeric =  annotationThingIdk.numeric();
+                System.out.println("!NUMERIC!: " + numeric);
+
+                if(!createStackInstructions((TypeElement) element, valueMapping, numeric))
+                    return false;
             }
         }
 
@@ -181,71 +189,76 @@ public class InstructionConfigStuff extends AbstractProcessor {
     }
 
     private boolean createStackInstructions(TypeElement classElement,
-                                            Map<TemplateVariable, String> valueMapping) {
+                                            Map<TemplateVariable, String> valueMapping,
+                                            boolean numeric) {
         System.out.println("create stack instructions for " + classElement.getSimpleName());
 //        File[] templates = instructionTemplateDir.listFiles();
         System.out.println(Arrays.toString(stackInstructionTemplates));
         for(InstructionTemplate instructionTemplate : stackInstructionTemplates){
             try {
-//                Template template = freeMarkerConfig.getTemplate(instructionTemplate.templateName);
-//                String template = instructionTemplate.templateString;
-
                 String instructionName = instructionTemplate.templateName
                         .replace(".ftl", "");//take out end thing if its there
                 instructionName = valueMapping.get(TemplateVariable.STACK_NAME)
                         + instructionName.substring("Stack".length());//remove leading "Stack"
 
-                //${stack_instruction_path}.${stack_package_name}.stack
                 String className =
                         valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
                         + ".stack." + instructionName;
 
-                JavaFileObject javaFileObject =
-                        processingEnv.getFiler().createSourceFile(className);
-
-                System.out.println("adding " + className);
-
-                Writer writer = javaFileObject.openWriter();
-
-                instructionTemplate.process(valueMapping, writer);
-
-                writer.close();
-                System.out.println("wrote it");
+                writeSourceFile(className, instructionTemplate, valueMapping);
             }catch(Exception exception){
                 messager.printMessage(Diagnostic.Kind.ERROR, exception.getMessage());
             }
         }
         for(InstructionTemplate template : operatorTemplates){
             try {
-//                Template template = freeMarkerConfig.getTemplate(instructionTemplate.templateName);
-//                String template = instructionTemplate.templateString;
-
                 String instructionName = template.templateName
                         .replace(".ftl", "")
                         .replace("Stack", valueMapping.get(TemplateVariable.STACK_NAME))
                         ;
 
-                //${stack_instruction_path}.${stack_package_name}.stack
                 String className =
                         valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
                                 + "." + instructionName;
-
-                JavaFileObject javaFileObject =
-                        processingEnv.getFiler().createSourceFile(className);
-
-                System.out.println("adding " + className);
-
-                Writer writer = javaFileObject.openWriter();
-
-                template.process(valueMapping, writer);
-
-                writer.close();
-                System.out.println("wrote it");
+                writeSourceFile(className, template, valueMapping);
             }catch(Exception exception){
                 messager.printMessage(Diagnostic.Kind.ERROR, exception.getMessage());
             }
         }
+        if (numeric) {
+            for (InstructionTemplate template : numericTemplates) {
+                try {
+                    String instructionName = template.templateName
+                            .replace(".ftl", "");
+                    instructionName = valueMapping.get(TemplateVariable.STACK_NAME)
+                            + instructionName;
+
+                    String className =
+                            valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
+                                    + ".numeric." + instructionName;
+                    writeSourceFile(className, template, valueMapping);
+                } catch (Exception exception) {
+                    messager.printMessage(Diagnostic.Kind.ERROR, exception.getMessage());
+                }
+            }
+        }
         return true;
+    }
+
+    private void writeSourceFile(String className,
+                                 InstructionTemplate instructionTemplate,
+                                 Map<TemplateVariable,String> valueMapping) throws IOException {
+        JavaFileObject javaFileObject =
+                processingEnv.getFiler().createSourceFile(className);
+
+        System.out.println("adding " + className);
+
+        Writer writer = javaFileObject.openWriter();
+
+        instructionTemplate.process(valueMapping, writer);
+
+        writer.close();
+        System.out.println("wrote it");
     }
 
 

@@ -2,16 +2,12 @@ package xyz.davidpineiro.jpush;
 
 import xyz.davidpineiro.jpush.vm.DebugPushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
-import xyz.davidpineiro.jpush.vm.instruction.floating.FloatAddInstruction;
+import xyz.davidpineiro.jpush.vm.instruction.floating.numeric.FloatAddInstruction;
 import xyz.davidpineiro.jpush.vm.instruction.floating.stack.FloatConstantInstruction;
 
 import java.util.Arrays;
 import java.util.List;
 
-/*
-TODO in order:
-- make annotation processor as shortcut to generate new instructions
- */
 public class TestBench {
 
     public static void main(String[] args) {
@@ -25,14 +21,17 @@ public class TestBench {
             );
 
         vm.addInstructions(program1);
+        System.out.println("--------------------");
         System.out.println("before:");
         vm.printAllStacks();
+        System.out.println("--------------------");
 
-        //i like how i just have a method called runUntilHalt() like i can defeat the halting problem
         vm.runUntilHalt();
 
         System.out.println("\nafter:");
         vm.printAllStacks();
+        System.out.println("--------------------");
+
 //        System.out.println(vm.intStack.toString());
     }
 

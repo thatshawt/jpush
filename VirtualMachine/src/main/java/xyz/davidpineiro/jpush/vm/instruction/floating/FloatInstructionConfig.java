@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.floating;
 
 import xyz.davidpineiro.jpush.vm.instruction.annotationHelper.GenerateStackIntructions;
 
-@GenerateStackIntructions
+@GenerateStackIntructions(numeric = true)
 public class FloatInstructionConfig {
 
     public static final String stack_name = "Float";

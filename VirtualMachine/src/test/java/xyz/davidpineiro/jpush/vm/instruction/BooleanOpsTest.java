@@ -43,7 +43,7 @@ public class BooleanOpsTest {
     void performTest(Instruction instruction, boolean expected){
         vm.clearAllStacks();
         vm.addInstructions(instruction);
-        vm.runUntilHalt(true);
+        vm.runUntilHalt();
         Assertions.assertEquals(expected, vm.boolStack.pop());
     }
 
@@ -52,7 +52,7 @@ public class BooleanOpsTest {
                                   boolean [] stackAfter){
         loadValues(stackBefore);
         vm.addInstructions(Arrays.asList(instructions));
-        vm.runUntilHalt(true);
+        vm.runUntilHalt();
         Assertions.assertEquals(stackAfter.length, vm.boolStack.size());
         for(boolean bool : stackAfter)
             Assertions.assertEquals(bool, vm.boolStack.pop());
@@ -62,7 +62,7 @@ public class BooleanOpsTest {
                                   Instruction[] instructions,
                                   boolean [] stackAfter){
         loadValues(stackBefore);
-        vm.runUntilHalt(true);
+        vm.runUntilHalt();
         Assertions.assertEquals(stackAfter.length, vm.boolStack.size());
         for(boolean bool : stackAfter)
             Assertions.assertNotEquals(bool, vm.boolStack.pop());

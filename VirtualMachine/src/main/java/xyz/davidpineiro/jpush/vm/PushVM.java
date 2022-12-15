@@ -32,11 +32,6 @@ public class PushVM {
         this.boolStack.clear();
     }
 
-//    public void addInstructions(List<Instruction> instructions){
-//        for(Instruction op : instructions)
-//            execStack.push(op);
-//    }
-//
     public void addInstructions(Instruction instruction, Instruction... instructions){
         execStack.push(instruction);
         for(Instruction op : instructions)
@@ -49,12 +44,11 @@ public class PushVM {
             execStack.push(op);
     }
 
-    //halting problem lol, i dont care
     public void runUntilHalt(){
         runUntilHalt(true);
     }
 
-    public void runUntilHalt(boolean backwards){
+    private void runUntilHalt(boolean backwards){
         while(!execStack.isEmpty()){
             step(backwards);
         }

@@ -2,7 +2,7 @@ package xyz.davidpineiro.jpush.vm.instruction.integer;
 
 import xyz.davidpineiro.jpush.vm.instruction.annotationHelper.GenerateStackIntructions;
 
-@GenerateStackIntructions
+@GenerateStackIntructions(numeric = true)
 public class IntInstructionConfig {
 
     public static final String stack_name = "Int";

@@ -30,19 +30,16 @@ public final class PushAssembler {
     }
 
     public static void loadStandardInstructions(){
-        Set<Class> boolOps = findAllClassesUsingClassLoader(
-                "xyz.davidpineiro.jpush.vm.instruction.bool"
-        );
-        Set<Class> floatOps = findAllClassesUsingClassLoader(
-                "xyz.davidpineiro.jpush.vm.instruction.floating"
-        );
-        Set<Class> intOps = findAllClassesUsingClassLoader(
-                "xyz.davidpineiro.jpush.vm.instruction.integer"
-        );
         Set<Class> classes = new HashSet<>();
-        classes.addAll(boolOps);
-        classes.addAll(floatOps);
-        classes.addAll(intOps);
+        classes.addAll(findAllClassesUsingClassLoader(
+                "xyz.davidpineiro.jpush.vm.instruction.integer"
+        ));
+        classes.addAll(findAllClassesUsingClassLoader(
+                "xyz.davidpineiro.jpush.vm.instruction.floating"
+        ));
+        classes.addAll(findAllClassesUsingClassLoader(
+                "xyz.davidpineiro.jpush.vm.instruction.bool"
+        ));
 
 //            Class clazz = Class.forName("xyz.davidpineiro.jpush.vm.instruction.bool.base.BoolConstantInstruction");
 
@@ -52,7 +49,7 @@ public final class PushAssembler {
 
     public static void addInstructions(Iterable<Class> classes){
         for(Class clazz : classes){
-//                System.out.printf("%s | ", clazz.getModifiers());
+//                System.out.printf("%s:%s | \n", clazz.getName(), clazz.getModifiers());
             if(instructionClass.isAssignableFrom(clazz) &&
                     !Modifier.isAbstract(clazz.getModifiers())){
                 String fullName = clazz.getSimpleName();
@@ -127,7 +124,7 @@ public final class PushAssembler {
         for(String line : program.split("\\r?\\n")){
             if(line.strip().isBlank())continue;
             String[] parts = line.split("\\s+");
-            System.out.println(Arrays.toString(parts));
+//            System.out.println(Arrays.toString(parts));
             Class clazz = instructionMap.get(parts[0].toLowerCase());
             if(clazz != null){
                 List<Object> args = new ArrayList<>();
@@ -136,6 +133,8 @@ public final class PushAssembler {
                     if(arg.equalsIgnoreCase("true")
                       || arg.equalsIgnoreCase("false")){//boolean
                         args.add(Boolean.parseBoolean(arg));
+//                    }else if(arg.startsWith("\"") && arg.endsWith("\"")){//strings in the future...
+//                        args.add(arg);
                     }else if(arg.contains(".")){//float
                         args.add(Float.parseFloat(arg));
                     }else{//int ?i hope?
@@ -155,15 +154,25 @@ public final class PushAssembler {
 
     /*
     https://www.baeldung.com/java-find-all-classes-in-package
+    modified from above so it can recursively find all classes inside packages
      */
     private static Set<Class> findAllClassesUsingClassLoader(String packageName) {
+        Set<Class> instructions = new HashSet<>();
         InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(packageName.replaceAll("[.]", "/"));
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        return reader.lines()
-                .filter(line -> line.endsWith(".class"))
-                .map(line -> getClass(line, packageName))
-                .collect(Collectors.toSet());
+
+        reader.lines().forEach(line -> {
+            if(line.endsWith(".class")){//its a class
+                instructions.add(getClass(line, packageName));
+            }else{//i hope its a package
+                instructions.addAll(findAllClassesUsingClassLoader(
+                        packageName + "." + line
+                ));
+            }
+        });
+
+        return instructions;
     }
 
     private static Class getClass(String className, String packageName) {
