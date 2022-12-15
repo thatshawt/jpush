@@ -1,5 +1,6 @@
 package xyz.davidpineiro.jpush.vm.instruction.integer;
 
+
 public class IntSubInstruction extends BinaryIntOperation {
     @Override
     public Integer getResult(Integer a, Integer b) {

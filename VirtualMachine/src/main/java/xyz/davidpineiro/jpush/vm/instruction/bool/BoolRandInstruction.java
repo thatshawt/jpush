@@ -1,7 +1,5 @@
 package xyz.davidpineiro.jpush.vm.instruction.bool;
 
-import xyz.davidpineiro.jpush.vm.instruction.bool.NullaryBoolOperation;
-
 import java.util.Random;
 
 public class BoolRandInstruction extends NullaryBoolOperation {

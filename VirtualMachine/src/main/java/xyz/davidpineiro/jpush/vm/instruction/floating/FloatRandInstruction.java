@@ -1,6 +1,4 @@
-package xyz.davidpineiro.jpush.vm.instruction.floating.stack;
-
-import xyz.davidpineiro.jpush.vm.instruction.floating.NullaryFloatOperation;
+package xyz.davidpineiro.jpush.vm.instruction.floating;
 
 import java.util.Random;
 

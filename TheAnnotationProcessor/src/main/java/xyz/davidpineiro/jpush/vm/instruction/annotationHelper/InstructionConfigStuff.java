@@ -26,7 +26,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
 
     //debugging...
     public static void main(String[] args) throws IOException, URISyntaxException {
-        URI uri = InstructionConfigStuff.class.getResource(INSTRUCTION_RESOURCE_PATH).toURI();
+        URI uri = InstructionConfigStuff.class.getResource(INSTRUCTIONS_OPERATORS_PATH).toURI();
         Path myPath;
         if (uri.getScheme().equals("jar")) {
             FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
@@ -42,6 +42,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
     }
 
     InstructionTemplate[] stackInstructionTemplates = null;
+    InstructionTemplate[] operatorTemplates = null;
 //    Configuration freeMarkerConfig;
     Messager messager;
 
@@ -62,18 +63,29 @@ public class InstructionConfigStuff extends AbstractProcessor {
         }
     }
 
-    public static final String INSTRUCTION_RESOURCE_PATH = "/instructions";
+    public static final String STACK_INSTRUCTION_RESOURCE_PATH
+            = "/instructions/stack";
+    public static final String INSTRUCTIONS_OPERATORS_PATH
+            = "/instructions/operators";
 
-    @Override
-    public void init(ProcessingEnvironment env) {
+    private FileSystem jarFileSystem = null;
+
+    /**
+     * scans the resources for templates in a given folder
+     * @param PATH
+     * @return
+     */
+    private InstructionTemplate[] scanForTemplates(final String PATH){
+        InstructionTemplate[] theArrayOfTemplates = null;
         try {
-            URI uri = InstructionConfigStuff.class.getResource("/instructions").toURI();
+            URI uri = InstructionConfigStuff.class.getResource(PATH).toURI();
             Path myPath;
             System.out.println("the thing: " + uri);
             if (uri.getScheme().equals("jar")) {
-                FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-                System.out.println("the files:" + fileSystem);
-                myPath = fileSystem.getPath("/instructions");
+                if(jarFileSystem == null)
+                    jarFileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                System.out.println("the files:" + jarFileSystem);
+                myPath = jarFileSystem.getPath(PATH);
             } else {
                 System.out.println("sussy baka");
                 myPath = Paths.get(uri);
@@ -91,14 +103,20 @@ public class InstructionConfigStuff extends AbstractProcessor {
                 final String templateName = path.getFileName().toString();
                 templatesTemp.add(new InstructionTemplate(templateName, templateData));
             }
-            stackInstructionTemplates = templatesTemp.toArray(new InstructionTemplate[]{});
+            theArrayOfTemplates = templatesTemp.toArray(new InstructionTemplate[]{});
 
-            System.out.println("after init: " + Arrays.toString(stackInstructionTemplates));
+            System.out.println("after init: " + Arrays.toString(theArrayOfTemplates));
         } catch (URISyntaxException | IOException e) {
             System.out.println("caught error and printed it");
             e.printStackTrace();
         }
+        return theArrayOfTemplates;
+    }
 
+    @Override
+    public void init(ProcessingEnvironment env) {
+        stackInstructionTemplates = scanForTemplates(STACK_INSTRUCTION_RESOURCE_PATH);
+        operatorTemplates = scanForTemplates(INSTRUCTIONS_OPERATORS_PATH);
 //        instructionTemplateDir = uri.;
 
         messager = env.getMessager();
@@ -149,13 +167,13 @@ public class InstructionConfigStuff extends AbstractProcessor {
                 }
                 if(valueMapping.size() != TemplateVariable.values().length){
                     messager.printMessage(Diagnostic.Kind.ERROR,
-                            "values not correct. " +
+                            "too little or too many values. " +
                                     Arrays.toString(valueMapping.keySet().toArray())
                             );
                     return false;
                 }
 
-                return createStackInstructions((TypeElement) element, valueMapping);
+                if(!createStackInstructions((TypeElement) element, valueMapping))return false;
             }
         }
 
@@ -168,7 +186,6 @@ public class InstructionConfigStuff extends AbstractProcessor {
 //        File[] templates = instructionTemplateDir.listFiles();
         System.out.println(Arrays.toString(stackInstructionTemplates));
         for(InstructionTemplate instructionTemplate : stackInstructionTemplates){
-
             try {
 //                Template template = freeMarkerConfig.getTemplate(instructionTemplate.templateName);
 //                String template = instructionTemplate.templateString;
@@ -191,6 +208,36 @@ public class InstructionConfigStuff extends AbstractProcessor {
                 Writer writer = javaFileObject.openWriter();
 
                 instructionTemplate.process(valueMapping, writer);
+
+                writer.close();
+                System.out.println("wrote it");
+            }catch(Exception exception){
+                messager.printMessage(Diagnostic.Kind.ERROR, exception.getMessage());
+            }
+        }
+        for(InstructionTemplate template : operatorTemplates){
+            try {
+//                Template template = freeMarkerConfig.getTemplate(instructionTemplate.templateName);
+//                String template = instructionTemplate.templateString;
+
+                String instructionName = template.templateName
+                        .replace(".ftl", "")
+                        .replace("Stack", valueMapping.get(TemplateVariable.STACK_NAME))
+                        ;
+
+                //${stack_instruction_path}.${stack_package_name}.stack
+                String className =
+                        valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
+                                + "." + instructionName;
+
+                JavaFileObject javaFileObject =
+                        processingEnv.getFiler().createSourceFile(className);
+
+                System.out.println("adding " + className);
+
+                Writer writer = javaFileObject.openWriter();
+
+                template.process(valueMapping, writer);
 
                 writer.close();
                 System.out.println("wrote it");
