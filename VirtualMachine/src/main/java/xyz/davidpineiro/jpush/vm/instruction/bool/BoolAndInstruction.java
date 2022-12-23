@@ -1,7 +1,5 @@
 package xyz.davidpineiro.jpush.vm.instruction.bool;
 
-//import xyz.davidpineiro.jpush.vm.instruction.bool.temp.BinaryBoolOperation;
-
 public class BoolAndInstruction extends BinaryBoolOperation {
 
     @Override
@@ -9,8 +7,4 @@ public class BoolAndInstruction extends BinaryBoolOperation {
         return a && b;
     }
 
-//    @Override
-//    public void exec(PushVM vm) {
-//        vm.boolStack.push(vm.boolStack.pop() && vm.boolStack.pop());
-//    }
 }

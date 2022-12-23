@@ -24,12 +24,12 @@ public class InstructionTemplate {
     /*
     replaces every instance of '${key}' to its corresponding 'value' in the valueMapping
      */
-    public void process(Map<InstructionConfigStuff.TemplateVariable, String> valueMapping, Writer writer) throws IOException {
+    public void process(Map<GenerateStackIntructions.TemplateVariable, String> valueMapping, Writer writer) throws IOException {
         String templateCopy = templateString;
-        for(final InstructionConfigStuff.TemplateVariable key : valueMapping.keySet()){
+        for(final GenerateStackIntructions.TemplateVariable key : valueMapping.keySet()){
             final String value = valueMapping.get(key);
 
-            templateCopy = templateCopy.replace("${" + key + "}",value);
+            templateCopy = templateCopy.replace("${" + key + "}", value);
         }
         writer.write(templateCopy);
     }

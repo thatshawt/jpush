@@ -6,8 +6,4 @@ public class FloatTanInstruction extends UnaryFloatOperation {
         return (float)Math.tan(a);
     }
 
-//    @Override
-//    public void exec(PushVM vm) {
-//        vm.floatStack.push((float) Math.tan(vm.floatStack.pop()));
-//    }
 }

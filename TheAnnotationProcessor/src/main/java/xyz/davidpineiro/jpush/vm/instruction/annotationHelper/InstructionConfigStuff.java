@@ -44,23 +44,6 @@ public class InstructionConfigStuff extends AbstractProcessor {
 //    Configuration freeMarkerConfig;
     Messager messager;
 
-    enum TemplateVariable{
-        STACK_NAME("stack_name"),
-        STACK_JAVA_TYPE("stack_java_type"),
-        STACK_VM_NAME("stack_vm_name"),
-        STACK_INSTRUCTION_PATH("stack_instruction_path"),
-        ;
-
-        public final String a;
-        public String toString(){
-            return this.a;
-        }
-
-        TemplateVariable(String sus) {
-            this.a = sus;
-        }
-    }
-
     InstructionTemplate[] stackInstructionTemplates = null;
     InstructionTemplate[] operatorTemplates = null;
     InstructionTemplate[] numericTemplates = null;
@@ -142,32 +125,55 @@ public class InstructionConfigStuff extends AbstractProcessor {
                 //needs to be a class or interface
                 if(!(element instanceof TypeElement))continue;
 
+                GenerateStackIntructions annotationThingIdk =
+                        element.getAnnotation(GenerateStackIntructions.class);
+
                 List<? extends Element> enclosedElements =
                     element.getEnclosedElements();
 
-                Map<TemplateVariable, String> valueMapping = new HashMap<>();
+                Map<GenerateStackIntructions.TemplateVariable, String> valueMapping = new HashMap<>();
 
-                for(Element enclosed : enclosedElements){
-                    if(!(enclosed instanceof VariableElement))continue;
-                    VariableElement var = (VariableElement) enclosed;
-
-                    String varName = var.getSimpleName().toString();
-                    String value = (String) var.getConstantValue();
-
-                    Arrays.stream(TemplateVariable.values()).forEach(varThing -> {
-                        if(varThing.a.equals(varName))
-                            valueMapping.put(varThing, value);
-                    });
-                }
-                if(!valueMapping.containsKey(TemplateVariable.STACK_INSTRUCTION_PATH)){
+//                for(Element enclosed : enclosedElements){
+//                    if(!(enclosed instanceof VariableElement))continue;
+//                    VariableElement var = (VariableElement) enclosed;
+//
+//                    String varName = var.getSimpleName().toString();
+//                    String value = (String) var.getConstantValue();
+//
+//                    Arrays.stream(GenerateStackIntructions.TemplateVariable.values()).forEach(varThing -> {
+//                        if(varThing.a.equals(varName))
+//                            valueMapping.put(varThing, value);
+//                    });
+//                }
+                valueMapping.put(
+                        GenerateStackIntructions.TemplateVariable.STACK_NAME,
+                        annotationThingIdk.stack_name()
+                );
+                valueMapping.put(
+                        GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH,
+                        annotationThingIdk.stack_instruction_path()
+                );
+                valueMapping.put(
+                        GenerateStackIntructions.TemplateVariable.STACK_JAVA_TYPE,
+                        annotationThingIdk.stack_java_type()
+                );
+                valueMapping.put(
+                        GenerateStackIntructions.TemplateVariable.STACK_VM_NAME,
+                        annotationThingIdk.stack_vm_name()
+                );
+                if(valueMapping
+                        .get(GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH)
+                        .isEmpty()){
                     TypeElement classElement = ((TypeElement) element);
                     valueMapping.put(
-                            TemplateVariable.STACK_INSTRUCTION_PATH,
+                            GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH,
                             classElement.getQualifiedName().toString()
                              .replace("." + element.getSimpleName().toString(), "")
                     );
                 }
-                if(valueMapping.size() != TemplateVariable.values().length){
+
+                //this branch should never enter...
+                if(valueMapping.size() != GenerateStackIntructions.TemplateVariable.values().length){
                     messager.printMessage(Diagnostic.Kind.ERROR,
                             "too little or too many values. " +
                                     Arrays.toString(valueMapping.keySet().toArray())
@@ -175,10 +181,8 @@ public class InstructionConfigStuff extends AbstractProcessor {
                     return false;
                 }
 
-                GenerateStackIntructions annotationThingIdk =
-                        element.getAnnotation(GenerateStackIntructions.class);
                 boolean numeric =  annotationThingIdk.numeric();
-                System.out.println("!NUMERIC!: " + numeric);
+//                System.out.println("!NUMERIC!: " + numeric);
 
                 if(!createStackInstructions((TypeElement) element, valueMapping, numeric))
                     return false;
@@ -189,7 +193,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
     }
 
     private boolean createStackInstructions(TypeElement classElement,
-                                            Map<TemplateVariable, String> valueMapping,
+                                            Map<GenerateStackIntructions.TemplateVariable, String> valueMapping,
                                             boolean numeric) {
         System.out.println("create stack instructions for " + classElement.getSimpleName());
 //        File[] templates = instructionTemplateDir.listFiles();
@@ -198,11 +202,11 @@ public class InstructionConfigStuff extends AbstractProcessor {
             try {
                 String instructionName = instructionTemplate.templateName
                         .replace(".ftl", "");//take out end thing if its there
-                instructionName = valueMapping.get(TemplateVariable.STACK_NAME)
+                instructionName = valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_NAME)
                         + instructionName.substring("Stack".length());//remove leading "Stack"
 
                 String className =
-                        valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
+                        valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH)
                         + ".stack." + instructionName;
 
                 writeSourceFile(className, instructionTemplate, valueMapping);
@@ -214,11 +218,11 @@ public class InstructionConfigStuff extends AbstractProcessor {
             try {
                 String instructionName = template.templateName
                         .replace(".ftl", "")
-                        .replace("Stack", valueMapping.get(TemplateVariable.STACK_NAME))
+                        .replace("Stack", valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_NAME))
                         ;
 
                 String className =
-                        valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
+                        valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH)
                                 + "." + instructionName;
                 writeSourceFile(className, template, valueMapping);
             }catch(Exception exception){
@@ -230,11 +234,11 @@ public class InstructionConfigStuff extends AbstractProcessor {
                 try {
                     String instructionName = template.templateName
                             .replace(".ftl", "");
-                    instructionName = valueMapping.get(TemplateVariable.STACK_NAME)
+                    instructionName = valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_NAME)
                             + instructionName;
 
                     String className =
-                            valueMapping.get(TemplateVariable.STACK_INSTRUCTION_PATH)
+                            valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH)
                                     + ".numeric." + instructionName;
                     writeSourceFile(className, template, valueMapping);
                 } catch (Exception exception) {
@@ -247,7 +251,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
 
     private void writeSourceFile(String className,
                                  InstructionTemplate instructionTemplate,
-                                 Map<TemplateVariable,String> valueMapping) throws IOException {
+                                 Map<GenerateStackIntructions.TemplateVariable,String> valueMapping) throws IOException {
         JavaFileObject javaFileObject =
                 processingEnv.getFiler().createSourceFile(className);
 
