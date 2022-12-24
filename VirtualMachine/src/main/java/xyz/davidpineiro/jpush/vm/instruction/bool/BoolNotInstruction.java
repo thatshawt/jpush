@@ -6,8 +6,4 @@ public class BoolNotInstruction extends UnaryBoolOperation {
         return !a;
     }
 
-//    @Override
-//    public void exec(PushVM vm) {
-//        vm.boolStack.push(!vm.boolStack.pop());
-//    }
 }
