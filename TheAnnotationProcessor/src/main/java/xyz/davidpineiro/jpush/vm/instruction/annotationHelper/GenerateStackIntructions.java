@@ -2,7 +2,6 @@ package xyz.davidpineiro.jpush.vm.instruction.annotationHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Optional;
 
 /*
 operators and stack is always generated.
