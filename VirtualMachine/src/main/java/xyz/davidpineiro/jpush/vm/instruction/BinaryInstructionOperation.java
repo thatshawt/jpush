@@ -1,23 +1,21 @@
 package xyz.davidpineiro.jpush.vm.instruction;
 
+import xyz.davidpineiro.jpush.vm.Operation;
 import xyz.davidpineiro.jpush.vm.PushStack;
 import xyz.davidpineiro.jpush.vm.PushVM;
 
-public abstract class BinaryInstructionOperation<T> implements Instruction {
+import java.util.List;
 
-    //make this true to keep the inputs of the thing
-    private boolean keepInputs = false;
+public abstract class BinaryInstructionOperation<T> extends Operation<T> {
 
-    protected abstract T getResult(T a, T b);
-    protected abstract PushStack<T> getStack(PushVM vm);
-
-    public void exec(PushVM vm){
-        PushStack<T> stack = getStack(vm);
-        if(!keepInputs)//dont keep inputs (default behavior)
-            stack.push(getResult(stack.pop(), stack.pop()));
-        else//keep inputs
-            stack.push(getResult(stack.get(stack.size()-1),
-                    stack.get(stack.size()-2)));
+    public BinaryInstructionOperation() {
+        super(2);
     }
 
+    protected abstract T getResult(T a, T b);
+
+    @Override
+    protected T processParams(List<T> params){
+        return getResult(params.get(0), params.get(1));
+    }
 }

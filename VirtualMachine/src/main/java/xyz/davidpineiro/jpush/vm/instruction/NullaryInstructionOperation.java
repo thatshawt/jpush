@@ -1,17 +1,21 @@
 package xyz.davidpineiro.jpush.vm.instruction;
 
+import xyz.davidpineiro.jpush.vm.Operation;
 import xyz.davidpineiro.jpush.vm.PushStack;
 import xyz.davidpineiro.jpush.vm.PushVM;
 
-public abstract class NullaryInstructionOperation<T> implements Instruction {
+import java.util.List;
 
-    protected abstract T getResult();
-    protected abstract PushStack<T> getStack(PushVM vm);
+public abstract class NullaryInstructionOperation<T> extends Operation<T> {
 
-    @Override
-    public void exec(PushVM vm){
-        //we do this regardless cus we dont have any inputs to keep or discard
-        getStack(vm).push(getResult());
+    public NullaryInstructionOperation() {
+        super(0);
     }
 
+    protected abstract T getResult();
+
+    @Override
+    protected T processParams(List<T> params){
+        return getResult();
+    }
 }
