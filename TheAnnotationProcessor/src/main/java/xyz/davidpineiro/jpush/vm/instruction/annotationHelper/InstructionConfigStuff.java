@@ -203,7 +203,7 @@ public class InstructionConfigStuff extends AbstractProcessor {
                 String instructionName = instructionTemplate.templateName
                         .replace(".ftl", "");//take out end thing if its there
                 instructionName = valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_NAME)
-                        + instructionName.substring("Stack".length());//remove leading "Stack"
+                        + instructionName;
 
                 String className =
                         valueMapping.get(GenerateStackIntructions.TemplateVariable.STACK_INSTRUCTION_PATH)
