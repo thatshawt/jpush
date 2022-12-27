@@ -30,6 +30,10 @@ public class PushStack<T> {
 
     }
 
+    public int getStackIndex(){
+        return this.stackIndex;
+    }
+
     private Stack<T> getCurrentStack(){
         return stacks.get(stackIndex);
     }

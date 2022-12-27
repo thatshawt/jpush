@@ -24,8 +24,6 @@ iq decreases when you need more information to solve a problem.
 
 public class PushVM {
 
-    protected boolean debug = false;
-
     public PushStack<Integer> intStack = new PushStack<Integer>();
     public PushStack<Float> floatStack = new PushStack<Float>();
     public PushStack<Boolean> boolStack = new PushStack<Boolean>();

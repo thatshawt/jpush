@@ -3,16 +3,14 @@ package xyz.davidpineiro.jpush.vm;
 public class DebugPushVM extends PushVM {
 
     public boolean verbose = false;
-    public DebugPushVM(){
-
-    }
+    public DebugPushVM(){}
 
     @Override
-    public void step() {
+    public void step(boolean backwards) {
         if(verbose){
-            System.out.println("executed " + super.execStack.peek().getClass().getSimpleName());
+            System.out.println("executed " + super.execStack.get(0).getClass().getSimpleName());
         }
-        super.step();
+        super.step(backwards);
     }
 
     public void printAllStacks(){

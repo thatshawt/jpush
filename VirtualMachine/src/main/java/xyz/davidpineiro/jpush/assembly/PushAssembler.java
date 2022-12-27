@@ -32,13 +32,7 @@ public final class PushAssembler {
     public static void loadStandardInstructions(){
         Set<Class> classes = new HashSet<>();
         classes.addAll(findAllClassesUsingClassLoader(
-                "xyz.davidpineiro.jpush.vm.instruction.integer"
-        ));
-        classes.addAll(findAllClassesUsingClassLoader(
-                "xyz.davidpineiro.jpush.vm.instruction.floating"
-        ));
-        classes.addAll(findAllClassesUsingClassLoader(
-                "xyz.davidpineiro.jpush.vm.instruction.bool"
+                "xyz.davidpineiro.jpush.vm.instruction"
         ));
 
 //            Class clazz = Class.forName("xyz.davidpineiro.jpush.vm.instruction.bool.base.BoolConstantInstruction");
@@ -69,52 +63,66 @@ public final class PushAssembler {
     public static void main(String[] args){
         try {
             Instruction[] program = assemble(
-                "IntConstant 1\n" +
-                "IntConstant 2\n" +
-                "IntAdd\n\n\n" +
-                "BoolConstant true\n" +
-                "BoolNot\n"
+                "DebugPrintStacks\n"
+                + "IntConstant 1\n"
+                + "IntConstant 2\n"
+                + "IntConstant 3\n"
+                + "IntConstant 4\n"
+                + "IntConstant 5\n"
+                + "IntConstant 6\n"
+                + "IntConstant 7\n"
+                + "DebugPrintStacks\n"
+
+                + "IntConstant 3\n"
+                + "FloatFromInt\n"
+                + "DebugPrintStacks\n"
+
+                + "IntConstant 4\n"
+                + "FloatFromInt\n"
+                + "DebugPrintStacks\n"
+
+                + "FloatDiv\n"
+                + "DebugPrintStacks\n"
+//                + "IntYank\n\n\n"
             );
 
             System.out.printf("\n\nprogram length: %d\nprogram: %s\n",
                     program.length, Arrays.toString(program));
 
             DebugPushVM vm = new DebugPushVM();
-            vm.printAllStacks();
+//            vm.verbose = true;
+            System.out.println();
             vm.addInstructions(List.of(program));
             vm.runUntilHalt();
-            vm.printAllStacks();
-
-//            System.out.println(classes);
-//            System.out.println(clazz.getConstructors()[0].newInstance((Boolean)true));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*
-    add two numbers program:
-    "
-    IntConstant 1
-    IntConstant 2
-    IntAdd
-    "
+    /**
+     add two numbers program example:
+     <code><br>
+     IntConstant 1<br>
+     IntConstant 2<br>
+     IntAdd<br>
+     </code><br>
 
-    boolean logic program:
-    "
-    BoolConstant true
-    BoolConstant false
-    BoolAnd
-    "
 
-    format of a program:
-    "
-    instruction1 arg0 arg1 arg2 ... argn
-    instruction2 arg0 arg1 arg2 ... argn
-    instruction2 arg0 arg1 arg2 ... argn
-    ...
-    instructionn arg0 arg1 arg2 ... argn
-    "
+    boolean logic program example:
+     <code><br>
+     BoolConstant true<br>
+     BoolConstant false<br>
+     BoolAnd<br>
+     </code><br>
+
+     general program format:
+     <code><br>
+     instruction1 arg0 arg1 arg2 ... argn<br>
+     instruction2 arg0 arg1 arg2 ... argn<br>
+     instruction2 arg0 arg1 arg2 ... argn<br>
+     ...<br>
+     instructionn arg0 arg1 arg2 ... argn<br>
+     </code>
 
      */
     public static Instruction[] assemble(String program) throws InstructionNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -123,7 +131,7 @@ public final class PushAssembler {
         //https://stackoverflow.com/questions/454908/split-java-string-by-new-line
         for(String line : program.split("\\r?\\n")){
             if(line.strip().isBlank())continue;
-            String[] parts = line.split("\\s+");
+            final String[] parts = line.split("\\s+");
 //            System.out.println(Arrays.toString(parts));
             Class clazz = instructionMap.get(parts[0].toLowerCase());
             if(clazz != null){
