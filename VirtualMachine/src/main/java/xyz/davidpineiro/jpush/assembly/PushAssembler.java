@@ -1,21 +1,19 @@
 package xyz.davidpineiro.jpush.assembly;
 
-import xyz.davidpineiro.jpush.assembly.exception.InstructionNotFoundException;
+import org.antlr.v4.runtime.*;
 import xyz.davidpineiro.jpush.vm.DebugPushVM;
 import xyz.davidpineiro.jpush.vm.instruction.Instruction;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class PushAssembler {
 
     private static final Class instructionClass;
-    private static final Map<String, Class> instructionMap = new HashMap<>();
+    public static final Map<String, Class> instructionMap;
 
     static{
         Class instructionClass1;
@@ -26,22 +24,23 @@ public final class PushAssembler {
         }
         instructionClass = instructionClass1;
 
-        loadStandardInstructions();
+        Map<String, Class> map = loadStandardInstructions();
+
+        instructionMap = Collections.unmodifiableMap(map);
     }
 
-    public static void loadStandardInstructions(){
+    private static Map<String, Class> loadStandardInstructions(){
         Set<Class> classes = new HashSet<>();
         classes.addAll(findAllClassesUsingClassLoader(
                 "xyz.davidpineiro.jpush.vm.instruction"
         ));
 
-//            Class clazz = Class.forName("xyz.davidpineiro.jpush.vm.instruction.bool.base.BoolConstantInstruction");
-
         //add all the instructions to the map
-        addInstructions(classes);
+        return addInstructions(classes);
     }
 
-    public static void addInstructions(Iterable<Class> classes){
+    public static Map<String, Class> addInstructions(Iterable<Class> classes){
+        Map<String, Class> instructionMap = new HashMap<>();
         for(Class clazz : classes){
 //                System.out.printf("%s:%s | \n", clazz.getName(), clazz.getModifiers());
             if(instructionClass.isAssignableFrom(clazz) &&
@@ -58,41 +57,46 @@ public final class PushAssembler {
 //                System.out.printf("NO  %s\n", clazz.getSimpleName());
             }
         }
+        return instructionMap;
     }
 
     public static void main(String[] args){
         try {
-            Instruction[] program = assemble(
-                "DebugPrintStacks\n"
-                + "IntConstant 1\n"
-                + "IntConstant 2\n"
-                + "IntConstant 3\n"
-                + "IntConstant 4\n"
-                + "IntConstant 5\n"
-                + "IntConstant 6\n"
-                + "IntConstant 7\n"
-                + "DebugPrintStacks\n"
+            String programtext =
+                    "DebugPrintStacks\n"
+                    + "IntConstant 1\n"
+                    + "IntConstant 2\n"
+                    + "IntConstant 3\n"
+                    + "IntConstant 4\n"
+                    + "IntConstant 5\n"
+                    + "IntConstant 6\n"
+                    + "IntConstant 7\n"
+//                    + "DebugPrintStacks\n"
 
-                + "IntConstant 3\n"
-                + "FloatFromInt\n"
-                + "DebugPrintStacks\n"
+                    + "IntConstant 3\n"
+                    + "FloatFromInt\n"
+//                    + "DebugPrintStacks\n"
 
-                + "IntConstant 4\n"
-                + "FloatFromInt\n"
-                + "DebugPrintStacks\n"
+                    + "IntConstant 4\n"
+                    + "FloatFromInt\n"
+//                    + "DebugPrintStacks\n"
 
-                + "FloatDiv\n"
-                + "DebugPrintStacks\n"
+                    + "FloatDiv\n"
+                    + "StringConstant \"sussy baka\"\n"
+                    + "DebugPrintStacks\n"
+
 //                + "IntYank\n\n\n"
-            );
+            ;
+
+            Instruction[] programMine = assemble(programtext);
 
             System.out.printf("\n\nprogram length: %d\nprogram: %s\n",
-                    program.length, Arrays.toString(program));
+                    programMine.length, Arrays.toString(programMine));
 
             DebugPushVM vm = new DebugPushVM();
 //            vm.verbose = true;
             System.out.println();
-            vm.addInstructions(List.of(program));
+            vm.addInstructions(List.of(programMine));
             vm.runUntilHalt();
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,40 +129,17 @@ public final class PushAssembler {
      </code>
 
      */
-    public static Instruction[] assemble(String program) throws InstructionNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        List<Instruction> instructionList = new ArrayList<>();
 
-        //https://stackoverflow.com/questions/454908/split-java-string-by-new-line
-        for(String line : program.split("\\r?\\n")){
-            if(line.strip().isBlank())continue;
-            final String[] parts = line.split("\\s+");
-//            System.out.println(Arrays.toString(parts));
-            Class clazz = instructionMap.get(parts[0].toLowerCase());
-            if(clazz != null){
-                List<Object> args = new ArrayList<>();
-                for(int i=1;i<parts.length;i++){//loop through args
-                    String arg = parts[i];
-                    if(arg.equalsIgnoreCase("true")
-                      || arg.equalsIgnoreCase("false")){//boolean
-                        args.add(Boolean.parseBoolean(arg));
-//                    }else if(arg.startsWith("\"") && arg.endsWith("\"")){//strings in the future...
-//                        args.add(arg);
-                    }else if(arg.contains(".")){//float
-                        args.add(Float.parseFloat(arg));
-                    }else{//int ?i hope?
-                        args.add(Integer.parseInt(arg));
-                    }
-                }
-
-                instructionList.add((Instruction)
-                        clazz.getConstructors()[0].newInstance(args.toArray()));
-            }else{
-                System.err.println(Arrays.toString(parts));
-                throw new InstructionNotFoundException();
-            }
-        }
-        return instructionList.toArray(new Instruction[]{});
+    public static Instruction[] assemble(String program) {
+        xyz.davidpineiro.jpush.assembly.PushAssemblerLexer lexer = new xyz.davidpineiro.jpush.assembly.PushAssemblerLexer(CharStreams.fromString(program));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        xyz.davidpineiro.jpush.assembly.PushAssemblerParser parser = new xyz.davidpineiro.jpush.assembly.PushAssemblerParser(tokenStream);
+        AssemblerAntlrVisitor visitor = new AssemblerAntlrVisitor();
+        List<Object> objects = visitor.visitStart(parser.start());
+        System.out.println(objects);
+        return objects.toArray(new Instruction[]{});
     }
+
 
     /*
     https://www.baeldung.com/java-find-all-classes-in-package
