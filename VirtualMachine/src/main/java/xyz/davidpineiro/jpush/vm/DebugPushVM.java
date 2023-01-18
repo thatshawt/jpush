@@ -14,11 +14,12 @@ public class DebugPushVM extends PushVM {
     }
 
     public void printAllStacks(){
+        System.out.println("Exec stack: " + this.execStack.toString());
         System.out.println("Int stack: " + this.intStack.toString());
-//        System.out.println("String stack: " + this.stringStack.toString());
+        System.out.println("Code stack: " + this.codeStack.toString());
         System.out.println("Float stack: " + this.floatStack.toString());
         System.out.println("Boolean stack: " + this.boolStack.toString());
-        System.out.println("Exec stack: " + this.execStack.toString());
+        System.out.println("String stack: " + this.stringStack.toString());
     }
 
 }

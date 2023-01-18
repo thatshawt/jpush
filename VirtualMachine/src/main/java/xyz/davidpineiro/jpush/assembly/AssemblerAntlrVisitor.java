@@ -82,7 +82,7 @@ public class AssemblerAntlrVisitor extends xyz.davidpineiro.jpush.assembly.PushA
 
     private static Instruction parseInstruction(String iden) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         Class clazz = PushAssembler.instructionMap.get(iden.toLowerCase());
-
+//        System.out.println(iden);
         return (Instruction) clazz.getConstructors()[0].newInstance();
     }
 

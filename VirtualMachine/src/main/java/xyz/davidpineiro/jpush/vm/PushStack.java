@@ -34,8 +34,12 @@ public class PushStack<T> {
         return this.stackIndex;
     }
 
-    private Stack<T> getCurrentStack(){
-        return stacks.get(stackIndex);
+    public Stack<T> getCurrentStack(){
+        return getStack(stackIndex);
+    }
+
+    public Stack<T> getStack(int n){
+        return stacks.get(n);
     }
 
     public void changeIndex(int index){

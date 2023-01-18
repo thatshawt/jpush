@@ -60,49 +60,6 @@ public final class PushAssembler {
         return instructionMap;
     }
 
-    public static void main(String[] args){
-        try {
-            String programtext =
-                    "DebugPrintStacks\n"
-                    + "IntConstant 1\n"
-                    + "IntConstant 2\n"
-                    + "IntConstant 3\n"
-                    + "IntConstant 4\n"
-                    + "IntConstant 5\n"
-                    + "IntConstant 6\n"
-                    + "IntConstant 7\n"
-//                    + "DebugPrintStacks\n"
-
-                    + "IntConstant 3\n"
-                    + "FloatFromInt\n"
-//                    + "DebugPrintStacks\n"
-
-                    + "IntConstant 4\n"
-                    + "FloatFromInt\n"
-//                    + "DebugPrintStacks\n"
-
-                    + "FloatDiv\n"
-                    + "StringConstant \"sussy baka\"\n"
-                    + "DebugPrintStacks\n"
-
-//                + "IntYank\n\n\n"
-            ;
-
-            Instruction[] programMine = assemble(programtext);
-
-            System.out.printf("\n\nprogram length: %d\nprogram: %s\n",
-                    programMine.length, Arrays.toString(programMine));
-
-            DebugPushVM vm = new DebugPushVM();
-//            vm.verbose = true;
-            System.out.println();
-            vm.addInstructions(List.of(programMine));
-            vm.runUntilHalt();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      add two numbers program example:
      <code><br>
@@ -173,5 +130,49 @@ public final class PushAssembler {
         }
         return null;
     }
-    
+
+    public static void main(String[] args){
+        try {
+            String programtext =
+                    "DebugPrintStacks\n"
+                    + "IntConstant 1\n"
+                    + "IntConstant 2\n"
+                    + "IntConstant 3\n"
+                    + "IntConstant 4\n"
+                    + "IntConstant 5\n"
+                    + "IntConstant 6\n"
+                    + "IntConstant 7\n"
+                    + "IntConstant 1\n"
+                    + "IntConstant 5\n"
+                    + "DebugPrintStacks\n"
+                    + "IntSweepTo\n"
+                    + "DebugPrintStacks\n"
+                    + "IntConstant 1\n"
+                    + "IntStackIndexSet\n"
+                    + "DebugPrintStacks\n"
+                    + "StringConstant \"FloatConstant 3.123245;FloatConstant 1.2345;FloatAdd;\"\n"
+                    + "CodeAssemble\n"
+                    + "DebugPrintStacks\n"
+                    + "IntConstant 0\n"
+                    + "IntConstant 3\n"
+                    + "CodeSweepInsertToExec\n"
+                    + "DebugPrintStacks\n"
+                    ;
+
+            Instruction[] programMine = assemble(programtext);
+
+            System.out.printf("\n\nprogram length: %d\nprogram: %s\n",
+                    programMine.length, Arrays.toString(programMine));
+
+            DebugPushVM vm = new DebugPushVM();
+            vm.verbose = true;
+            System.out.println();
+            vm.addInstructions(List.of(programMine));
+            vm.runUntilHalt();
+            vm.printAllStacks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
